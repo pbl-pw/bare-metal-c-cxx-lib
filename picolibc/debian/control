@@ -1,0 +1,43 @@
+Source: picolibc
+Priority: optional
+Maintainer: Keith Packard <keithp@keithp.com>
+Build-Depends: debhelper-compat (= 13), gcc-arm-none-eabi, gcc-riscv64-unknown-elf, gcc-xtensa-lx106,
+ gcc-aarch64-linux-gnu, meson, ninja-build, qemu-system-arm
+Standards-Version: 4.6.2
+Rules-Requires-Root: no
+Section: devel
+Homepage: https://keithp.com/picolibc
+Vcs-Git: git://keithp.com/git/picolibc.git
+Vcs-Browser: https://keithp.com/cgit/picolibc.git/
+
+Package: picolibc-riscv64-unknown-elf
+Architecture: all
+Depends: ${misc:Depends}, gcc-riscv64-unknown-elf
+Description: Smaller embedded C library for RISC-V development
+ PicoLibc is a combination of Newlib and AVR libc bits designed
+ for small-RAM embedded systems. This package has binaries for
+ RISC-V processors.
+
+Package: picolibc-arm-none-eabi
+Architecture: all
+Depends: ${misc:Depends}, gcc-arm-none-eabi
+Description: Smaller embedded C library for ARM development
+ PicoLibc is a combination of Newlib and AVR libc bits designed
+ for small-RAM embedded systems. This package has binaries for
+ ARM processors. This library is intended to replace libnewlib-nano
+
+Package: picolibc-xtensa-lx106-elf
+Architecture: all
+Depends: ${misc:Depends}, gcc-xtensa-lx106
+Description: Smaller embedded C library for ESP8266 development
+ PicoLibc is a combination of Newlib and AVR libc bits designed
+ for small-RAM embedded systems. This package has binaries for
+ ESP8266 processors.
+
+Package: picolibc-aarch64-linux-gnu
+Architecture: all
+Depends: ${misc:Depends}, gcc-aarch64-linux-gnu
+Description: Smaller embedded C library for 64-bit ARM development
+ PicoLibc is a combination of Newlib and AVR libc bits designed
+ for small-RAM embedded systems. This package has binaries for
+ ARM 64-bit processors.

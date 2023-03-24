@@ -1,0 +1,146 @@
+#!/usr/bin/make -f
+# See debhelper(7) (uncomment to enable)
+# output every command that modifies files on the build system.
+export DH_VERBOSE = 1
+
+# Don't let dpkg-buildflags mess with the compiler settings
+export DEB_CPPFLAGS_MAINT_SET =
+export DEB_CFLAGS_MAINT_SET =
+export DEB_LDFLAGS_MAINT_SET =
+
+BUILDDIR=build
+
+BUILDPATH=$(shell pwd)/debian/$(BUILDDIR)
+
+%:
+	dh $@ -B$(BUILDDIR)
+
+RISCV_ARCH=riscv64-unknown-elf
+ARM_ARCH=arm-none-eabi
+LX106_ARCH=xtensa-lx106-elf
+AARCH64_ARCH=aarch64-linux-gnu
+
+MESON_SHARED_C_ARGS = -Wdate-time -ffile-prefix-map=$(BUILDPATH)=. -fdebug-prefix-map=$(BUILDPATH)=.
+
+MESON_SHARED_FLAGS = \
+	--prefix=/usr
+
+MESON_RELEASE_FLAGS=-Dbuild-type-subdir=release --buildtype=release
+
+MESON_RISCV_MINSIZE_FLAGS = \
+	$(MESON_SHARED_FLAGS) \
+	-Dc_args='$(MESON_SHARED_C_ARGS) -msave-restore' \
+	--cross-file scripts/cross-$(RISCV_ARCH).txt \
+	-Dspecsdir=/usr/lib/picolibc/$(RISCV_ARCH) \
+	-Dincludedir=lib/picolibc/$(RISCV_ARCH)/include \
+	-Dlibdir=lib/picolibc/$(RISCV_ARCH)/lib
+
+MESON_RISCV_RELEASE_FLAGS = \
+	$(MESON_RELEASE_FLAGS) \
+	$(MESON_SHARED_FLAGS) \
+	-Dc_args='$(MESON_SHARED_C_ARGS)' \
+	--cross-file scripts/cross-$(RISCV_ARCH).txt \
+	-Dspecsdir=/usr/lib/picolibc/$(RISCV_ARCH) \
+	-Dincludedir=lib/picolibc/$(RISCV_ARCH)/include \
+	-Dlibdir=lib/picolibc/$(RISCV_ARCH)/lib
+
+MESON_ARM_MINSIZE_FLAGS = \
+	$(MESON_SHARED_FLAGS) \
+	-Dc_args='$(MESON_SHARED_C_ARGS)' \
+	-Dtests=true \
+	--cross-file scripts/cross-$(ARM_ARCH).txt \
+	-Dspecsdir=/usr/lib/picolibc/$(ARM_ARCH) \
+	-Dincludedir=lib/picolibc/$(ARM_ARCH)/include \
+	-Dlibdir=lib/picolibc/$(ARM_ARCH)/lib
+
+MESON_ARM_RELEASE_FLAGS = \
+	$(MESON_RELEASE_FLAGS) \
+	$(MESON_SHARED_FLAGS) \
+	-Dc_args='$(MESON_SHARED_C_ARGS)' \
+	-Dtests=true \
+	--cross-file scripts/cross-$(ARM_ARCH).txt \
+	-Dspecsdir=/usr/lib/picolibc/$(ARM_ARCH) \
+	-Dincludedir=lib/picolibc/$(ARM_ARCH)/include \
+	-Dlibdir=lib/picolibc/$(ARM_ARCH)/lib
+
+MESON_LX106_MINSIZE_FLAGS = \
+	$(MESON_SHARED_FLAGS) \
+	-Dc_args='$(MESON_SHARED_C_ARGS)' \
+	--cross-file scripts/cross-$(LX106_ARCH).txt \
+	-Dnewlib-long-time_t=true \
+	-Dspecsdir=/usr/lib/$(LX106_ARCH) \
+	-Dincludedir=lib/$(LX106_ARCH)/include \
+	-Dlibdir=lib/$(LX106_ARCH)/lib
+
+MESON_LX106_RELEASE_FLAGS = \
+	$(MESON_RELEASE_FLAGS) \
+	$(MESON_SHARED_FLAGS) \
+	-Dc_args='$(MESON_SHARED_C_ARGS)' \
+	--cross-file scripts/cross-$(LX106_ARCH).txt \
+	-Dnewlib-long-time_t=true \
+	-Dspecsdir=/usr/lib/$(LX106_ARCH) \
+	-Dincludedir=lib/$(LX106_ARCH)/include \
+	-Dlibdir=lib/$(LX106_ARCH)/lib
+
+MESON_AARCH64_MINSIZE_FLAGS = \
+	$(MESON_SHARED_FLAGS) \
+	-Dc_args='$(MESON_SHARED_C_ARGS)' \
+	-Dtests=true \
+	--cross-file scripts/cross-$(AARCH64_ARCH).txt \
+	-Dspecsdir=/usr/lib/picolibc/$(AARCH64_ARCH) \
+	-Dincludedir=lib/picolibc/$(AARCH64_ARCH)/include \
+	-Dlibdir=lib/picolibc/$(AARCH64_ARCH)/lib
+
+MESON_AARCH64_RELEASE_FLAGS = \
+	$(MESON_RELEASE_FLAGS) \
+	$(MESON_SHARED_FLAGS) \
+	-Dc_args='$(MESON_SHARED_C_ARGS)' \
+	-Dtests=true \
+	--cross-file scripts/cross-$(AARCH64_ARCH).txt \
+	-Dspecsdir=/usr/lib/picolibc/$(AARCH64_ARCH) \
+	-Dincludedir=lib/picolibc/$(AARCH64_ARCH)/include \
+	-Dlibdir=lib/picolibc/$(AARCH64_ARCH)/lib
+
+override_dh_autoreconf:
+	echo 'no reconf needed'
+
+override_dh_auto_clean:
+	rm -fr debian/$(BUILDDIR)
+
+override_dh_auto_configure:
+	meson . debian/$(BUILDDIR)/$(RISCV_ARCH) $(MESON_RISCV_MINSIZE_FLAGS) 2>&1 | grep -v 'path separator\|This is not supported\|a hard error in the future'
+	meson . debian/$(BUILDDIR)/$(ARM_ARCH) $(MESON_ARM_MINSIZE_FLAGS) 2>&1 | grep -v 'path separator\|This is not supported\|a hard error in the future'
+	meson . debian/$(BUILDDIR)/$(LX106_ARCH) $(MESON_LX106_MINSIZE_FLAGS) 2>&1 | grep -v 'path separator\|This is not supported\|a hard error in the future'
+	meson . debian/$(BUILDDIR)/$(AARCH64_ARCH) $(MESON_AARCH64_MINSIZE_FLAGS) 2>&1 | grep -v 'path separator\|This is not supported\|a hard error in the future'
+	meson . debian/$(BUILDDIR)/$(RISCV_ARCH)-release $(MESON_RISCV_RELEASE_FLAGS) 2>&1 | grep -v 'path separator\|This is not supported\|a hard error in the future'
+	meson . debian/$(BUILDDIR)/$(ARM_ARCH)-release $(MESON_ARM_RELEASE_FLAGS) 2>&1 | grep -v 'path separator\|This is not supported\|a hard error in the future'
+	meson . debian/$(BUILDDIR)/$(LX106_ARCH)-release $(MESON_LX106_RELEASE_FLAGS) 2>&1 | grep -v 'path separator\|This is not supported\|a hard error in the future'
+	meson . debian/$(BUILDDIR)/$(AARCH64_ARCH)-release $(MESON_AARCH64_RELEASE_FLAGS) 2>&1 | grep -v 'path separator\|This is not supported\|a hard error in the future'
+
+override_dh_auto_build:
+	cd debian/$(BUILDDIR)/$(RISCV_ARCH) && ninja -v
+	cd debian/$(BUILDDIR)/$(ARM_ARCH) && ninja -v
+	cd debian/$(BUILDDIR)/$(LX106_ARCH) && ninja -v
+	cd debian/$(BUILDDIR)/$(AARCH64_ARCH) && ninja -v
+	cd debian/$(BUILDDIR)/$(RISCV_ARCH)-release && ninja -v
+	cd debian/$(BUILDDIR)/$(ARM_ARCH)-release && ninja -v
+	cd debian/$(BUILDDIR)/$(LX106_ARCH)-release && ninja -v
+	cd debian/$(BUILDDIR)/$(AARCH64_ARCH)-release && ninja -v
+
+override_dh_auto_test:
+ifeq (,$(filter nocheck,$(DEB_BUILD_OPTIONS)))
+	cd debian/$(BUILDDIR)/$(ARM_ARCH) && meson test --timeout-multiplier=10
+	cd debian/$(BUILDDIR)/$(AARCH64_ARCH) && meson test --timeout-multiplier=10
+	cd debian/$(BUILDDIR)/$(ARM_ARCH)-release && meson test --timeout-multiplier=10
+	cd debian/$(BUILDDIR)/$(AARCH64_ARCH)-release && meson test --timeout-multiplier=10
+endif
+
+override_dh_auto_install:
+	cd debian/$(BUILDDIR)/$(RISCV_ARCH) && DESTDIR=${CURDIR}/debian/tmp ninja install
+	cd debian/$(BUILDDIR)/$(ARM_ARCH) && DESTDIR=${CURDIR}/debian/tmp ninja install
+	cd debian/$(BUILDDIR)/$(LX106_ARCH) && DESTDIR=${CURDIR}/debian/tmp ninja install
+	cd debian/$(BUILDDIR)/$(AARCH64_ARCH) && DESTDIR=${CURDIR}/debian/tmp ninja install
+	cd debian/$(BUILDDIR)/$(RISCV_ARCH)-release && DESTDIR=${CURDIR}/debian/tmp ninja install
+	cd debian/$(BUILDDIR)/$(ARM_ARCH)-release && DESTDIR=${CURDIR}/debian/tmp ninja install
+	cd debian/$(BUILDDIR)/$(LX106_ARCH)-release && DESTDIR=${CURDIR}/debian/tmp ninja install
+	cd debian/$(BUILDDIR)/$(AARCH64_ARCH)-release && DESTDIR=${CURDIR}/debian/tmp ninja install
