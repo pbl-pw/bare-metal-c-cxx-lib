@@ -3,9 +3,50 @@ cmake_minimum_required(VERSION 3.20)
 project(emlib VERSION 15.0.7)
 
 set(LLVM_TARGET_TRIPLE "thumbv7m-none-eabi" CACHE STRING "llvm triple")
+
 option(LIBCXX_INCLUDE_BENCHMARKS "Build the libc++ benchmarks and their dependencies" OFF)
 
-add_subdirectory(compiler-rt)
+include(ExternalProject)
+
+ExternalProject_Add(compiler_rt
+	SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/compiler-rt
+	PREFIX compiler-rt
+	INSTALL_DIR compiler-rt/install
+	CMAKE_ARGS
+	-Wno-dev
+	-DCMAKE_INSTALL_PREFIX=<INSTALL_DIR>
+	-DCMAKE_BUILD_TYPE=MinSizeRel
+	-DCMAKE_ASM_COMPILER_TARGET=arm-none-eabi
+	-DCMAKE_ASM_FLAGS=-march=armv7m+nofp
+	-DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
+	-DCMAKE_CXX_COMPILER_TARGET=arm-none-eabi
+	-DCMAKE_CXX_FLAGS=-march=armv7m+nofp
+	-DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
+	-DCMAKE_C_COMPILER_TARGET=arm-none-eabi
+	-DCMAKE_C_FLAGS=-march=armv7m+nofp
+	# Let CMake know we're cross-compiling
+	-DCMAKE_SYSTEM_NAME=Generic
+	-DCMAKE_TRY_COMPILE_TARGET_TYPE=STATIC_LIBRARY
+	-DCOMPILER_RT_BAREMETAL_BUILD=ON
+	-DCOMPILER_RT_BUILD_BUILTINS=ON
+	-DCOMPILER_RT_BUILD_LIBFUZZER=OFF
+	-DCOMPILER_RT_BUILD_PROFILE=OFF
+	-DCOMPILER_RT_BUILD_SANITIZERS=OFF
+	-DCOMPILER_RT_BUILD_XRAY=OFF
+	-DCOMPILER_RT_BUILD_ORC=OFF
+	-DCOMPILER_RT_DEFAULT_TARGET_ONLY=ON
+	-DCOMPILER_RT_INCLUDE_TESTS=OFF
+	USES_TERMINAL_CONFIGURE TRUE
+	USES_TERMINAL_BUILD TRUE
+	USES_TERMINAL_INSTALL TRUE
+	USES_TERMINAL_TEST TRUE
+	LIST_SEPARATOR ,
+	# Always run the build command so that incremental builds are correct.
+	BUILD_ALWAYS TRUE
+	CONFIGURE_HANDLED_BY_BUILD TRUE
+)
+
+
 add_subdirectory(libcxx)
 add_subdirectory(libcxxabi)
 add_subdirectory(picolibc)
