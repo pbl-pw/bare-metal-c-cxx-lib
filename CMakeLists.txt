@@ -4,7 +4,7 @@ project(emlib VERSION 15.0.7)
 
 include(ExternalProject)
 
-set(runtimes_flags "-march=armv7m+nofp -mfloat-abi=soft")
+set(runtimes_flags "-march=armv7m+nofp -mfloat-abi=soft -I${CMAKE_BINARY_DIR}/install/include")
 set(target_triple arm-none-eabi)
 
 set(cmake_args
@@ -33,7 +33,7 @@ set(cmake_cxx_args
 ExternalProject_Add(picolibc
 	SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/picolibc
 	PREFIX picolibc
-	INSTALL_DIR picolibc/install
+	INSTALL_DIR install
 	CMAKE_ARGS ${cmake_args} ${cmake_asm_args} ${cmake_c_args}
 		-DCMAKE_SYSTEM_PROCESSOR=arm
 		-DNEWLIB_GLOBAL_ERRNO=ON
@@ -78,6 +78,7 @@ ExternalProject_Add(libcxx
 	SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/libcxx
 	PREFIX libcxx
 	INSTALL_DIR libcxx/install
+	DEPENDS picolibc
 	CMAKE_ARGS ${cmake_args} ${cmake_cxx_args}
 		-DLIBCXX_CXX_ABI=libcxxabi
 		-DLIBCXX_ENABLE_DEBUG_MODE_SUPPORT=OFF
@@ -90,7 +91,7 @@ ExternalProject_Add(libcxx
 		-DLIBCXX_ENABLE_RANDOM_DEVICE=OFF
 		-DLIBCXX_ENABLE_RTTI=OFF
 		-DLIBCXX_ENABLE_THREADS=OFF
-		-DLIBCXX_ENABLE_WIDE_CHARACTERS=OFF
+		# -DLIBCXX_ENABLE_WIDE_CHARACTERS=OFF
 		-DLIBUNWIND_ENABLE_THREADS=OFF
 		-DLIBCXXABI_BAREMETAL=ON
 		-DLIBCXXABI_ENABLE_ASSERTIONS=OFF
