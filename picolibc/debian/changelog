@@ -1,0 +1,588 @@
+picolibc (1.8.5-2) unstable; urgency=medium
+
+  * Silence aarch64 linker warning during autopkgtst 
+
+ -- Keith Packard <keithp@keithp.com>  Wed, 27 Sep 2023 09:36:11 -0700
+
+picolibc (1.8.5-1) unstable; urgency=medium
+
+  * New upstream
+
+  * New printf variant, 'long-long'. 'integer' variant no longer
+    supports long long.
+
+ -- Keith Packard <keithp@keithp.com>  Tue, 26 Sep 2023 08:40:45 -0700
+
+picolibc (1.8.4-1) unstable; urgency=medium
+
+  * New upstream
+
+  * New printf variant, 'minimal'. 'integer' variant now supports
+    long long.
+
+ -- Keith Packard <keithp@keithp.com>  Wed, 20 Sep 2023 17:25:27 -0700
+
+picolibc (1.8.3-1) unstable; urgency=medium
+
+  * New upstream
+
+  * Bugs fixed using -fanalyzer and more CI targets
+
+ -- Keith Packard <keithp@keithp.com>  Thu, 10 Aug 2023 13:58:00 -0700
+
+picolibc (1.8.2-2) unstable; urgency=medium
+
+  * Adjust compile flags for riscv autopkgtest. Closes: #1037961.
+
+ -- Keith Packard <keithp@keithp.com>  Wed, 14 Jun 2023 16:12:55 -0700
+
+picolibc (1.8.2-1) unstable; urgency=medium
+
+  * New upstream
+
+  * Fix a couple of minor imprecisions in pow and 80-bit powl.
+
+  * Merge newlib changes that included an update to the ARM assembly
+    code.
+
+ -- Keith Packard <keithp@keithp.com>  Sun, 28 May 2023 20:06:47 -0700
+
+picolibc (1.8.1-1) unstable; urgency=medium
+
+  * New upstream
+
+  * Add wchar_t support to stdio
+
+ -- Keith Packard <keithp@keithp.com>  Mon, 03 Apr 2023 12:07:57 -0700
+
+picolibc (1.8-1) unstable; urgency=medium
+
+  * New upstream
+
+  * long double math library support
+
+ -- Keith Packard <keithp@keithp.com>  Thu, 22 Dec 2022 12:35:12 -0800
+
+picolibc (1.7.9-1) unstable; urgency=medium
+
+  * New upstream
+
+  * ARC, ESP32, MIPS, MSP430, NIOS II, and SPARC support added
+
+ -- Keith Packard <keithp@keithp.com>  Mon, 10 Oct 2022 22:30:43 -0700
+
+picolibc (1.7.8-1) unstable; urgency=medium
+
+  * New upstream
+
+  * Doc updates
+
+  * GCC 12 fixes
+
+  * vprintf/vscanf code size reductions
+
+ -- Keith Packard <keithp@keithp.com>  Thu, 11 Aug 2022 08:17:37 -0700
+
+picolibc (1.7.7-1) unstable; urgency=medium
+
+  * New upstream
+
+  * Merge current newlib
+
+  * Re-do buffered I/O support
+
+ -- Keith Packard <keithp@keithp.com>  Fri, 20 May 2022 17:46:20 -0700
+
+picolibc (1.7.6-1) unstable; urgency=medium
+
+  * New upstream
+
+  * Fix use with c++ applications.
+
+  * Fix broken compiler feature auto-detection in Debian packages.
+
+  * Add -msave-restore for minsize RISC-V package build.
+
+ -- Keith Packard <keithp@keithp.com>  Fri, 25 Mar 2022 14:48:45 -0700
+
+picolibc (1.7.5-1) unstable; urgency=medium
+
+  * New upstream
+
+  * Fixes for bugs found with glibc test suite
+
+  * Add '--picolibc-buildtype=release' variants for applications that
+    want speed-optimized instead of space-optimized code.
+
+ -- Keith Packard <keithp@keithp.com>  Mon, 14 Mar 2022 10:30:47 -0700
+
+picolibc (1.7.4-1) unstable; urgency=medium
+
+  * New upstream
+
+  * Improvements to math library
+
+ -- Keith Packard <keithp@keithp.com>  Fri, 19 Nov 2021 09:33:14 -0800
+
+picolibc (1.7.3-2) unstable; urgency=medium
+
+  * Add -fno-stack-protector to touch test build. Closes: #995473.
+
+  * Update standards to 4.6.0.1
+
+ -- Keith Packard <keithp@keithp.com>  Mon, 04 Oct 2021 22:02:31 -0700
+
+picolibc (1.7.3-1) unstable; urgency=medium
+
+  * New upstream release
+
+  * Add -Wall -Wextra to default builds. Fixed warnings this raised.
+
+  * Add htonl and friends (based on __htonl). Thanks to Johan de
+    Claville Christiansen
+
+  * Set errno in scalbn and scalbnf (patch forwarded to newlib).
+
+  * Merge newlib recent changes which includes a couple of libm fixes.
+
+ -- Keith Packard <keithp@keithp.com>  Thu, 30 Sep 2021 13:21:44 -0700
+
+picolibc (1.7.2-2) unstable; urgency=medium
+
+  * Build with updated gcc version
+
+ -- Keith Packard <keithp@keithp.com>  Wed, 21 Jul 2021 14:08:52 -0700
+
+picolibc (1.7.2-1) unstable; urgency=medium
+
+  * Fix picolibc.ld to split C++ exceptions back apart (thanks to
+    Khalil Estell)
+
+  * Add vsscanf to tinystdio (required for libstdc++).
+
+  * Also stick -isystem in C++ compile command to try and get
+    picolibc headers to be used instead of newlib.
+
+ -- Keith Packard <keithp@keithp.com>  Fri, 16 Jul 2021 17:57:26 -0700
+
+picolibc (1.7.1-1) unstable; urgency=medium
+
+  *  1. Add __cxa_atexit implementation to 'picoexit' path as required by
+    C++
+
+  * Fix lack of 'hh' support in integer-only tinystdio printf path.
+
+  * Fix tinystdio __file flag initialization for C++ apps
+
+ -- Keith Packard <keithp@keithp.com>  Mon, 12 Jul 2021 14:16:57 -0700
+
+picolibc (1.7-1) unstable; urgency=medium
+
+  * Merge libc and libm into a single library. Having them split
+    doesn't offer any advantages while requiring that applications add
+    '-lm' to link successfully. Having them merged allows use of libm
+    calls from libc code.
+
+  * Add hex float format to *printf, *scanf and strto{d,f,ld}. This is
+    required for C99 support.
+
+  * Unify strto{d,f,ld} and *scanf floating point parsing code. This
+    ensures that the library is consistent in how floats are parsed.
+
+  * Make strto{d,f,ld} set errno to ERANGE on overflow/underflow,
+    including when the result is a subnormal number.
+
+ -- Keith Packard <keithp@keithp.com>  Fri, 02 Jul 2021 11:11:39 -0700
+
+picolibc (1.6.2-1) unstable; urgency=medium
+
+  * Change `restrict` keyword in published headers to `__restrict` to
+    restore compatibility with applications building with --std=c18.
+
+  * Additional cleanups in time conversion funcs (Thanks to R. Riez)
+
+ -- Keith Packard <keithp@keithp.com>  Thu, 17 Jun 2021 08:53:58 -0700
+
+picolibc (1.6.1-1) unstable; urgency=medium
+
+  * Code cleanups for time conversion funcs (Thanks to R. Diez)
+
+  * Add '-fno-stack-protector' when supported by the C compiler
+    to avoid trouble building with native Ubuntu GCC.
+
+  * Bug fix for converting denorms with sscanf and strto{d,f,ld}.
+
+  * Use __asm__ for inline asm code to allow building applications
+    with --std=c18
+
+  * Fix exit code for semihosting 'abort' call to make it visible
+    to the hosting system.
+
+  * Add strfromf and strfromd implementations. These are simple
+    wrappers around sscanf, but strfromf handles float conversions
+    without requiring a pass through 'double' or special linker hacks.
+
+ -- Keith Packard <keithp@keithp.com>  Thu, 10 Jun 2021 12:34:19 -0700
+
+picolibc (1.6-1) unstable; urgency=medium
+
+  * Bugfix for snprintf(buf, 0) and vsnprintf(buf, 0) to avoid
+    smashing memory
+
+  * Support building libstdc++ on top of picolibc
+
+  * Add 'hosted' crt0 variant that calls exit when main
+    returns. This makes testing easier without burdening embedded apps
+    with unused exit processing code.
+
+  * Add 'minimal' crt0 variant that skips constructors to
+    save space on systems known to not use any.
+
+  * Fix HW floating point initialization on 32-bit ARM processors to
+    perform 'dsb' and 'isb' instructions to ensure the FPU enabling
+    write is complete before executing any FPU instructions.
+
+  * Create a new '--picolibc-prefix' GCC command line parameter that
+    sets the base of all picolibc file names.
+
+  * Add bare-metal i386 and x86_64 initializatiton code (thanks to
+    Mike Haertel). These initialize the processor from power up to
+    running code without requiring any BIOS.
+
+  * Merge newlib as of late April, 2021
+
+  * Add 'timegm' function (thanks to R. Diez).
+
+  * Fix a number of tinystdio bugs: handle fread with size==0, parse
+    'NAN' and 'INF' in fscanf in a case-insensitive manner, fix
+    negative precision to '*' arguments in printf, fix handling of
+    'j', 'z' and 't' argument size specifiers (thanks to Sebastian
+    Meyer).
+
+  * Make the fenv API more consistent and more conformant with the
+    spec. All architectures now fall back to the default code
+    for soft float versions, which avoids having the various exception
+    and rounding modes get defined when not supported.
+
+ -- Keith Packard <keithp@keithp.com>  Fri, 04 Jun 2021 18:46:30 -0700
+
+picolibc (1.5.1-3) unstable; urgency=medium
+
+  * Change how test architecures are selected (thanks to Paul Gevers).
+
+  * Test on aarch64
+
+ -- Keith Packard <keithp@keithp.com>  Wed, 27 Jan 2021 10:34:41 -0800
+
+picolibc (1.5.1-2) unstable; urgency=medium
+
+  * Mark tests with 'Restrictions: skip-not-installable' to skip
+    autopkg test on armhf. Closes: #980086.
+
+ -- Keith Packard <keithp@keithp.com>  Tue, 26 Jan 2021 17:36:43 -0800
+
+picolibc (1.5.1-1) unstable; urgency=medium
+
+  * New upstream release
+
+  * Fix riscv autopkgtest failure
+
+ -- Keith Packard <keithp@keithp.com>  Thu, 14 Jan 2021 10:17:21 -0800
+
+picolibc (1.5-1) unstable; urgency=medium
+
+  * New upstream release
+
+  * Make picolibc more compatible with C++ compilers.
+
+  * Add GCC specs file and linker script for building C++ applications
+    with G++ that enable exception handling by linking in call stack
+    information.
+
+  * A few clang build fixes, including libm exception generation
+
+  * Nano malloc fixes, especially for 'unusual' arguments
+
+  * Merge in newlib 4.1.0 code
+
+  * More libm exception/errno/infinity fixes, mostly in the gamma funcs.
+
+  * Add tests for all semihost v2.0 functions.
+
+  * A few RISC-V assembly fixes and new libm code.
+
+  * Build fixes to reliably replace generic code with
+    architecture-specific implementations.
+
+ -- Keith Packard <keithp@keithp.com>  Thu, 07 Jan 2021 13:06:25 -0800
+
+picolibc (1.4.7-2) unstable; urgency=medium
+
+  * Source upload. Closes: #978412.
+
+ -- Keith Packard <keithp@keithp.com>  Sun, 27 Dec 2020 12:42:53 -0800
+
+picolibc (1.4.7-1) unstable; urgency=medium
+
+  * New upstream version
+
+  * Fix numerous libm exception and errno bugs. The math functions are
+    all now verified to match the C19 and Posix standards in this
+    area.
+
+  * Change behavior of 'gamma' function to match glibc which returns
+    lgamma for this function. Applications should not use this
+    function, they should pick either lgamma or tgamma as appropriate.
+
+  * Fix fma/fmaf on arm and RISC-V so that the machine-specific
+    versions are used when the hardware has support. Also fix the math
+    library to only use fma/fmaf when it is supported by the hardware.
+
+  * Fix numerous nano-malloc bugs, especially with unusual parameters.
+
+  * Change nano-malloc to always clear returned memory.
+
+  * Improve nano-realloc to perform better in various ways, including
+    merging adjacent free blocks and expanding the heap.
+
+  * Add malloc tests, both a basic functional test and a stress test.
+
+  * Improve build portability to Windows. Picolibc should now build
+    using mingw.
+
+  * Use hardware TLS register on ARM when available.
+
+  * Support clang compiler. Thanks to Denis Feklushkin
+    <denis.feklushkin@gmail.com> and Joakim Nohlgård
+    <joakim@nohlgard.se>.
+
+  * Avoid implicit float/double conversions. Check this by having
+    clang builds use -Wdouble-promotion -Werror=double-promotion flags
+
+  * Have portable code check for machine-specific overrides by
+    matching filenames. This avoids building libraries with duplicate
+    symbols and retains compatibility with newlib (which uses a
+    different mechanism for this effect).
+
+  * Patches to support building with CompCert
+    (http://compcert.inria.fr/), a formally verified compiler. Thanks
+    to Sebastian Meyer <meyer@absint.com>.
+
+ -- Keith Packard <keithp@keithp.com>  Sun, 25 Oct 2020 15:20:43 -0700
+
+picolibc (1.4.6-2) unstable; urgency=medium
+
+  * Add aarch64-linux-gnu target
+
+ -- Keith Packard <keithp@keithp.com>  Mon, 03 Aug 2020 14:03:51 -0700
+
+picolibc (1.4.6-1) unstable; urgency=medium
+
+  * New upstream version
+
+  * Install 'ssp' (stack smashing protection) header files. This fixes
+    compiling with -D_FORTIFY_SOURCE.
+
+  * Make getc/ungetc re-entrant. This feature, which is enabled by
+    default, uses atomic instruction sequences that do not require
+    OS support.
+
+  * Numerous iconv fixes, including enabling testing and switching
+    external CCS file loading to use stdio. By default, iconv provides
+    built-in CCS data for all of the supported encodings, which takes
+    a fairly large amount of read-only memory. Iconv is now always
+    included in picolibc as  it isn't included in applications unless
+    explicitly referenced by them.
+
+  * Add __getauxval stub implementation to make picolibc work with
+    GCC version 10 compiled for aarch64-linux-gnu.
+
+  * Change how integer- and float- only versions of printf and scanf
+    are selected. Instead of re-defining the symbols using the C
+    preprocessor, picolibc now re-defines the symbols at link
+    time. This avoids having applications compiled with a mixture of
+    modes link in multiple versions of the underlying functions, while
+    still preserving the smallest possible integer-only
+    implementation.
+
+  * Document how to use picolibc on a native POSIX system for
+    testing. Check out the [os.md](doc/os.md) file for details.
+
+  * Merge current newlib bits in. This includes better fenv support,
+    for which tests are now included in the picolibc test suite.
+
+ -- Keith Packard <keithp@keithp.com>  Mon, 03 Aug 2020 11:47:08 -0700
+
+picolibc (1.4.5-1) unstable; urgency=medium
+
+  * Fix section order in picolibc.ld to give applications correct
+    control over the layout of .preserve, .init and .fini regions.
+
+  * Add startup and TLS support for aarch64 and non Cortex-M 32-bit
+    arm.
+
+ -- Keith Packard <keithp@keithp.com>  Sun, 28 Jun 2020 15:34:19 -0700
+
+picolibc (1.4.4-1) unstable; urgency=medium
+
+  * New upstream 1.4.4
+
+  * Fix printf 'g' output when using 'ryu' conversion code
+
+  * Add fenv for ARM from newlib
+
+ -- Keith Packard <keithp@keithp.com>  Wed, 10 Jun 2020 16:06:11 -0700
+
+picolibc (1.4.3-1) unstable; urgency=medium
+
+  * New upstream version 1.4.3
+
+  * Make fix for CVE 2019-14871 - CVE 2019-14878 in original newlib
+    stdio code not call 'abort'. Allocation failures are now reported
+    back to the application.
+
+  * Add 'exact' floating point print/scan code to tinystdio. Thanks
+    to Sreepathi Pai for pointing me at the Ryu code by Ulf
+    Adams.
+
+  * Add regular expression functions from newlib. These were removed
+    by accident while removing POSIX filesystem-specific code.
+
+  * Make tinystdio versions of [efg]cvt functions. This means that the
+    default tinystdio version of picolibc no longer calls malloc from
+    these functions.
+
+  * More clang-compatibility fixes. (Thanks to Denis Feklushkin)
+
+  * Remove stdatomic.h and tgmath.h. (they should not be provide by picolibc)
+
+ -- Keith Packard <keithp@keithp.com>  Tue, 09 Jun 2020 12:45:58 -0700
+
+picolibc (1.4.2-3) unstable; urgency=medium
+
+  * Move lx106 bits back to original location
+
+ -- Keith Packard <keithp@keithp.com>  Wed, 03 Jun 2020 12:05:15 -0700
+
+picolibc (1.4.2-2) unstable; urgency=medium
+
+  * Remove aarch64 support to avoid hitting NEW queue
+
+ -- Keith Packard <keithp@keithp.com>  Thu, 21 May 2020 11:20:07 -0700
+
+picolibc (1.4.2-1) unstable; urgency=medium
+
+  * Clang source compatibility. Clang should now be able to compile
+    the library.
+
+  * Testing on github on push and pull-request. For now, this is
+    limited to building the library due to a bug in qemu.
+
+  * Get newlib stdio working again. You can now usefully use newlib's
+    stdio. This requires a working malloc and is substantially larger
+    than tinystdio, but has more accurate floating point input. This
+    requires POSIX functions including read, write and a few others.
+
+  * Fix long double strtold. The working version is only available
+    when using tinystdio; if using newlib stdio, strtold is simply not
+    available.
+
+  * Improve tinystdio support for C99 printf/scanf additions.
+
+  * Check for correct prefix when sysroot-install option is
+    selected. The value of this option depends on how gcc was
+    configured, and (alas) meson won't let us set it at runtime, so
+    instead we complain if the wrong value was given and display the
+    correct value.
+
+  * Sync up with current newlib master
+
+  * Add aarch64-linux-gnu support
+
+ -- Keith Packard <keithp@keithp.com>  Thu, 21 May 2020 08:51:37 -0700
+
+picolibc (1.4.1-2) unstable; urgency=medium
+
+  * Build with newer GCC versions
+
+ -- Keith Packard <keithp@keithp.com>  Sat, 18 Apr 2020 14:56:40 -0700
+
+picolibc (1.4.1-1) unstable; urgency=medium
+
+  * ARM TLS corruption fix
+  * Compilation compatibility fixes
+  * Add -msave-restore to RISC-V version
+
+ -- Keith Packard <keithp@keithp.com>  Mon, 09 Mar 2020 12:02:54 -0700
+
+picolibc (1.4-1) unstable; urgency=medium
+
+  * Merge upstream license changes from BSD 4-clause to BSD 3-clause
+  * Add copyright information where missing
+  * Create debian/copyright file automatically by perusing source files
+
+ -- Keith Packard <keithp@keithp.com>  Tue, 04 Feb 2020 23:07:07 -0800
+
+picolibc (1.3-1) unstable; urgency=medium
+
+  * New upstream release (1.3)
+  * Add testing
+  * Add lx106 binary package for xtensa-lx106-elf
+  * Fix some RISC-V ABI issues
+
+ -- Keith Packard <keithp@keithp.com>  Tue, 31 Dec 2019 23:44:40 -0800
+
+picolibc (1.2.1-1) unstable; urgency=medium
+
+  * New upstream release (1.2.1)
+  * Switch back to __OBSOLETE_MATH for machines without hw double
+  * Include realloc and mallinfo in the library
+  * Use SYS_EXIT on semihost implementations without SYS_EXIT_EXTENDED
+
+ -- Keith Packard <keithp@keithp.com>  Mon, 02 Dec 2019 20:55:24 -0800
+
+picolibc (1.2-1) unstable; urgency=medium
+
+  * New upstream release  (1.2)
+  * Add fopen/fdopen and clock semihost support
+  * Fix picolibc.ld to actually use user-defined memory areas
+
+ -- Keith Packard <keithp@keithp.com>  Thu, 28 Nov 2019 10:46:30 -0800
+
+picolibc (1.1.1-1) unstable; urgency=medium
+
+  * New upstream release (1.1.1)
+  * Compute TLS support in GCC automatically which disables this on ARM
+  * Change how picolibc.specs gets installed
+  * Update cross-compile meson files to match upstream
+
+ -- Keith Packard <keithp@keithp.com>  Wed, 20 Nov 2019 00:15:51 -0800
+
+picolibc (1.1-2) unstable; urgency=medium
+
+  * Make install depend on compilers so .specs files work afterwards
+
+ -- Keith Packard <keithp@keithp.com>  Fri, 15 Nov 2019 17:00:46 -0800
+
+picolibc (1.1-1) unstable; urgency=medium
+
+  * Upstream release 1.1
+  * semihost support
+  * Posix I/O support on Posix systems
+  * Merged newlib code
+  * Hello world example
+
+ -- Keith Packard <keithp@keithp.com>  Thu, 14 Nov 2019 17:01:13 -0800
+
+picolibc (1.0-1) unstable; urgency=medium
+
+  * Version 1.0
+  * Rename from newlib-nano
+  * Switch to TLS
+  * Add picolib to provide tls helper and sbrk implementation
+  * Provide linker script sample
+  * Adjust debhelper dependency to >= 12
+  * Add riscv target
+  * Incorporate printf fixes from NuttX
+
+ -- Keith Packard <keithp@keithp.com>  Sun, 22 Sep 2019 19:21:20 -0700

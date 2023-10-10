@@ -32,10 +32,7 @@ set(cmake_cxx_args
 add_subdirectory(compiler-rt)
 
 ExternalProject_Add(picolibc
-	GIT_REPOSITORY https://github.com/picolibc/picolibc.git
-	GIT_TAG 1.8.5-2
-	GIT_SHALLOW TRUE
-	GIT_PROGRESS TRUE
+	SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/picolibc
 	PREFIX picolibc
 	INSTALL_DIR install
 	CMAKE_ARGS ${cmake_args} ${cmake_asm_args} ${cmake_c_args}
