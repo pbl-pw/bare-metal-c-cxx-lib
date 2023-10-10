@@ -4,9 +4,8 @@ project(emlib VERSION 15.0.7)
 
 include(ExternalProject)
 
-set(target_triple arm-none-eabi)
-set(runtimes_flags "-march=armv7m+nofp -mfloat-abi=soft")
-set(runtimes_cxx_flags "${runtimes_flags} -nostdlibinc -isystem${CMAKE_BINARY_DIR}/install/include -D_LIBCPP_HAS_NO_LIBRARY_ALIGNED_ALLOCATION")
+set(target_triple thumbv7m-none-eabi)
+set(runtimes_cxx_flags "-nostdlibinc -isystem${CMAKE_BINARY_DIR}/install/include -D_LIBCPP_HAS_NO_LIBRARY_ALIGNED_ALLOCATION")
 
 set(cmake_args
 -Wno-dev
@@ -14,22 +13,23 @@ set(cmake_args
 -DCMAKE_INSTALL_PREFIX=<INSTALL_DIR>
 # Let CMake know we're cross-compiling
 -DCMAKE_SYSTEM_NAME=Generic
+-DCMAKE_SYSTEM_PROCESSOR=arm
 -DCMAKE_TRY_COMPILE_TARGET_TYPE=STATIC_LIBRARY
+-DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
 )
 set(cmake_asm_args
 -DCMAKE_ASM_COMPILER_TARGET=${target_triple}
--DCMAKE_ASM_FLAGS=${runtimes_flags}
 )
 set(cmake_c_args
--DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
 -DCMAKE_C_COMPILER_TARGET=${target_triple}
--DCMAKE_C_FLAGS=${runtimes_flags}
 )
 set(cmake_cxx_args
 -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
 -DCMAKE_CXX_COMPILER_TARGET=${target_triple}
 -DCMAKE_CXX_FLAGS=${runtimes_cxx_flags}
 )
+
+add_subdirectory(compiler-rt)
 
 ExternalProject_Add(picolibc
 	GIT_REPOSITORY https://github.com/picolibc/picolibc.git
@@ -39,7 +39,6 @@ ExternalProject_Add(picolibc
 	PREFIX picolibc
 	INSTALL_DIR install
 	CMAKE_ARGS ${cmake_args} ${cmake_asm_args} ${cmake_c_args}
-		-DCMAKE_SYSTEM_PROCESSOR=arm
 		-DNEWLIB_GLOBAL_ERRNO=ON
 		-DPICOLIBC_TLS=OFF
 		# -D__SINGLE_THREAD__=ON
@@ -54,38 +53,6 @@ ExternalProject_Add(picolibc
 	CONFIGURE_HANDLED_BY_BUILD TRUE
 )
 
-ExternalProject_Add(compiler-rt
-	SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/llvm-project/runtimes
-	PREFIX compiler-rt
-	INSTALL_DIR install
-	CMAKE_ARGS ${cmake_args} ${cmake_asm_args} ${cmake_c_args}
-		-DMINGW=TRUE
-		-DLLVM_BINARY_DIR=OFF
-		-DLLVM_ENABLE_RUNTIMES=compiler-rt
-		-DLLVM_DEFAULT_TARGET_TRIPLE=thumbv7m-none-eabi
-		-DLLVM_INCLUDE_TESTS=OFF
-		-DCOMPILER_RT_BAREMETAL_BUILD=ON
-		-DCOMPILER_RT_BUILD_BUILTINS=ON
-		-DCOMPILER_RT_BUILD_LIBFUZZER=OFF
-		-DCOMPILER_RT_BUILD_PROFILE=OFF
-		-DCOMPILER_RT_BUILD_SANITIZERS=OFF
-		-DCOMPILER_RT_BUILD_XRAY=OFF
-		-DCOMPILER_RT_BUILD_ORC=OFF
-		-DCOMPILER_RT_DEFAULT_TARGET_ONLY=ON
-		-DCOMPILER_RT_INCLUDE_TESTS=OFF
-		-DCOMPILER_RT_USE_BUILTINS_LIBRARY=ON
-	STEP_TARGETS build
-	USES_TERMINAL_CONFIGURE TRUE
-	USES_TERMINAL_BUILD TRUE
-	USES_TERMINAL_INSTALL TRUE
-	USES_TERMINAL_TEST TRUE
-	LIST_SEPARATOR ,
-	# Always run the build command so that incremental builds are correct.
-	BUILD_ALWAYS TRUE
-	CONFIGURE_HANDLED_BY_BUILD TRUE
-)
-
-
 ExternalProject_Add(libcxx
 	SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/llvm-project/runtimes
 	PREFIX libcxx
@@ -95,7 +62,7 @@ ExternalProject_Add(libcxx
 		-DMINGW=TRUE
 		-DLLVM_BINARY_DIR=OFF
 		-DLLVM_ENABLE_RUNTIMES=libcxx,libcxxabi
-		-DLLVM_DEFAULT_TARGET_TRIPLE=thumbv7m-none-eabi
+		-DLLVM_DEFAULT_TARGET_TRIPLE=${target_triple}
 		-DLLVM_INCLUDE_TESTS=OFF
 		-DLIBCXX_CXX_ABI=libcxxabi
 		-DLIBCXX_ENABLE_FILESYSTEM=OFF
