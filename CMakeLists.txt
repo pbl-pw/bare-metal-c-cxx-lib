@@ -4,10 +4,24 @@ project(emlib VERSION 17.0.2)
 
 include(ExternalProject)
 
-set(EMLIB_INSTALL_DIR "${CMAKE_BINARY_DIR}/install")
+if(NOT EMLIB_INSTALL_DIR)
+	set(EMLIB_INSTALL_DIR "${CMAKE_BINARY_DIR}/install")
+endif(NOT EMLIB_INSTALL_DIR)
 
-set(target_triple thumbv7m-none-eabi)
-set(runtimes_cxx_flags "-nostdlibinc -isystem${EMLIB_INSTALL_DIR}/include")
+if(NOT EMLIB_ARCH)
+	set(EMLIB_ARCH "armv7m") # arch name, must support by compiler-rt
+endif(NOT EMLIB_ARCH)
+
+if(NOT EMLIB_ABI)
+	set(EMLIB_ABI "eabi") # "abi, ex: eabi, eabihf
+endif(NOT EMLIB_ABI)
+
+if(NOT EMLIB_ARCH_FLAGS)
+	set(EMLIB_ARCH_FLAGS "-march=armv7m -mfloat-abi=soft -mfpu=none") # detail flags, ex: -march=armv7m -mfloat-abi=soft -mfpu=none
+endif(NOT EMLIB_ARCH_FLAGS)
+
+set(target_triple "${EMLIB_ARCH}-none-${EMLIB_ABI}")
+set(runtimes_cxx_flags "${EMLIB_ARCH_FLAGS} -nostdlibinc -isystem${EMLIB_INSTALL_DIR}/include")
 
 set(cmake_args
 -Wno-dev
@@ -15,14 +29,17 @@ set(cmake_args
 -DCMAKE_INSTALL_PREFIX=<INSTALL_DIR>
 # Let CMake know we're cross-compiling
 -DCMAKE_SYSTEM_NAME=Generic
+-DCMAKE_SYSTEM_PROCESSOR=${EMLIB_ARCH}
 -DCMAKE_TRY_COMPILE_TARGET_TYPE=STATIC_LIBRARY
 -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
 )
 set(cmake_asm_args
 -DCMAKE_ASM_COMPILER_TARGET=${target_triple}
+-DCMAKE_ASM_FLAGS=${EMLIB_ARCH_FLAGS}
 )
 set(cmake_c_args
 -DCMAKE_C_COMPILER_TARGET=${target_triple}
+-DCMAKE_C_FLAGS=${EMLIB_ARCH_FLAGS}
 )
 set(cmake_cxx_args
 -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
@@ -30,7 +47,36 @@ set(cmake_cxx_args
 -DCMAKE_CXX_FLAGS=${runtimes_cxx_flags}
 )
 
-add_subdirectory(compiler-rt)
+ExternalProject_Add(compiler-rt
+	SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/llvm-project/runtimes"
+	PREFIX compiler-rt
+	INSTALL_DIR "${EMLIB_INSTALL_DIR}"
+	CMAKE_ARGS ${cmake_args} ${cmake_asm_args} ${cmake_c_args} ${cmake_cxx_args}
+		-DLLVM_BINARY_DIR=OFF
+		-DLLVM_ENABLE_RUNTIMES=compiler-rt
+		-DLLVM_DEFAULT_TARGET_TRIPLE=${target_triple}
+		-DLLVM_INCLUDE_TESTS=OFF
+		-DCOMPILER_RT_BAREMETAL_BUILD=ON
+		-DCOMPILER_RT_BUILD_BUILTINS=ON
+		-DCOMPILER_RT_BUILD_LIBFUZZER=OFF
+		-DCOMPILER_RT_BUILD_PROFILE=OFF
+		-DCOMPILER_RT_BUILD_SANITIZERS=OFF
+		-DCOMPILER_RT_BUILD_XRAY=OFF
+		-DCOMPILER_RT_BUILD_ORC=OFF
+		-DCOMPILER_RT_BUILD_MEMPROF=OFF
+		-DCOMPILER_RT_BUILD_GWP_ASAN=OFF
+		-DCOMPILER_RT_DEFAULT_TARGET_ONLY=ON
+		-DCOMPILER_RT_INCLUDE_TESTS=OFF
+	STEP_TARGETS build
+	USES_TERMINAL_CONFIGURE TRUE
+	USES_TERMINAL_BUILD TRUE
+	USES_TERMINAL_INSTALL TRUE
+	USES_TERMINAL_TEST TRUE
+	LIST_SEPARATOR ,
+	# Always run the build command so that incremental builds are correct.
+	BUILD_ALWAYS TRUE
+	CONFIGURE_HANDLED_BY_BUILD TRUE
+)
 
 ExternalProject_Add(picolibc
 	SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/picolibc"
