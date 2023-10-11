@@ -1,11 +1,13 @@
 cmake_minimum_required(VERSION 3.20)
 
-project(emlib VERSION 15.0.7)
+project(emlib VERSION 17.0.2)
 
 include(ExternalProject)
 
+set(EMLIB_INSTALL_DIR "${CMAKE_BINARY_DIR}/install")
+
 set(target_triple thumbv7m-none-eabi)
-set(runtimes_cxx_flags "-nostdlibinc -isystem${CMAKE_BINARY_DIR}/install/include -D_LIBCPP_HAS_NO_LIBRARY_ALIGNED_ALLOCATION")
+set(runtimes_cxx_flags "-nostdlibinc -isystem${EMLIB_INSTALL_DIR}/include -D_LIBCPP_HAS_NO_LIBRARY_ALIGNED_ALLOCATION")
 
 set(cmake_args
 -Wno-dev
@@ -32,9 +34,9 @@ set(cmake_cxx_args
 add_subdirectory(compiler-rt)
 
 ExternalProject_Add(picolibc
-	SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/picolibc
+	SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/picolibc"
 	PREFIX picolibc
-	INSTALL_DIR install
+	INSTALL_DIR "${EMLIB_INSTALL_DIR}"
 	CMAKE_ARGS ${cmake_args} ${cmake_asm_args} ${cmake_c_args}
 		-DNEWLIB_GLOBAL_ERRNO=ON
 		-DPICOLIBC_TLS=OFF
@@ -51,9 +53,9 @@ ExternalProject_Add(picolibc
 )
 
 ExternalProject_Add(libcxx
-	SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/llvm-project/runtimes
+	SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/llvm-project/runtimes"
 	PREFIX libcxx
-	INSTALL_DIR install
+	INSTALL_DIR "${EMLIB_INSTALL_DIR}"
 	DEPENDS picolibc compiler-rt
 	CMAKE_ARGS ${cmake_args} ${cmake_asm_args} ${cmake_c_args} ${cmake_cxx_args}
 		-DMINGW=TRUE

@@ -19,9 +19,9 @@ set(cmake_cxx_args
 )
 
 ExternalProject_Add(compiler-rt
-	SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../llvm-project/runtimes
+	SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../llvm-project/runtimes"
 	PREFIX compiler-rt
-	INSTALL_DIR install
+	INSTALL_DIR "${EMLIB_INSTALL_DIR}"
 	CMAKE_ARGS ${cmake_args} ${cmake_asm_args} ${cmake_c_args} ${cmake_cxx_args}
 		-DMINGW=TRUE
 		-DLLVM_BINARY_DIR=OFF
