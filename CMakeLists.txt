@@ -21,7 +21,6 @@ if(NOT EMLIB_ARCH_FLAGS)
 endif(NOT EMLIB_ARCH_FLAGS)
 
 set(target_triple "${EMLIB_ARCH}-none-${EMLIB_ABI}")
-set(runtimes_cxx_flags "${EMLIB_ARCH_FLAGS} -nostdlibinc -isystem${EMLIB_INSTALL_DIR}/include")
 
 set(cmake_args
 -Wno-dev
@@ -36,16 +35,16 @@ set(cmake_args
 )
 set(cmake_asm_args
 -DCMAKE_ASM_COMPILER_TARGET=${target_triple}
--DCMAKE_ASM_FLAGS=${EMLIB_ARCH_FLAGS}
+"-DCMAKE_ASM_FLAGS=${EMLIB_ARCH_FLAGS} -nostdlibinc"
 )
 set(cmake_c_args
 -DCMAKE_C_COMPILER_TARGET=${target_triple}
--DCMAKE_C_FLAGS=${EMLIB_ARCH_FLAGS}
+"-DCMAKE_C_FLAGS=${EMLIB_ARCH_FLAGS} -nostdlibinc"
 )
 set(cmake_cxx_args
 -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
 -DCMAKE_CXX_COMPILER_TARGET=${target_triple}
--DCMAKE_CXX_FLAGS=${runtimes_cxx_flags}
+"-DCMAKE_CXX_FLAGS=${EMLIB_ARCH_FLAGS} -nostdlibinc -isystem${EMLIB_INSTALL_DIR}/include"
 )
 
 ExternalProject_Add(compiler-rt
@@ -141,3 +140,17 @@ ExternalProject_Add(libcxx
 	CONFIGURE_HANDLED_BY_BUILD TRUE
 )
 
+string(REGEX REPLACE " +" ";" arch_flags ${EMLIB_ARCH_FLAGS})
+file(MAKE_DIRECTORY "${EMLIB_INSTALL_DIR}/include/c++/v1")
+
+add_library(libc STATIC IMPORTED GLOBAL)
+set_target_properties(libc PROPERTIES IMPORTED_LOCATION "${EMLIB_INSTALL_DIR}/lib/libc.a")
+target_include_directories(libc SYSTEM INTERFACE "${EMLIB_INSTALL_DIR}/include")
+target_compile_options(libc INTERFACE "--target=${target_triple}" ${arch_flags} "-nostdlibinc")
+add_dependencies(libc picolibc-install)
+
+add_library(libc++ STATIC IMPORTED GLOBAL)
+set_target_properties(libc++ PROPERTIES IMPORTED_LOCATION "${EMLIB_INSTALL_DIR}/lib/libc++.a")
+target_include_directories(libc++ SYSTEM INTERFACE "${EMLIB_INSTALL_DIR}/include/c++/v1")
+target_link_libraries(libc++ INTERFACE libc)
+add_dependencies(libc++ libcxx-install)
