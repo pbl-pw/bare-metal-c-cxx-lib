@@ -1,6 +1,6 @@
 include(ExternalProject)
 
-set(target_triple arm-none-eabi)
+set(target_triple armv7m-none-eabi)
 set(runtimes_flags "-march=armv7m+nofp -mfloat-abi=soft")
 set(runtimes_cxx_flags "${runtimes_flags} ${runtimes_cxx_flags}")
 
@@ -38,7 +38,6 @@ ExternalProject_Add(compiler-rt
 		-DCOMPILER_RT_BUILD_GWP_ASAN=OFF
 		-DCOMPILER_RT_DEFAULT_TARGET_ONLY=ON
 		-DCOMPILER_RT_INCLUDE_TESTS=OFF
-		-DCOMPILER_RT_USE_BUILTINS_LIBRARY=ON
 	STEP_TARGETS build
 	USES_TERMINAL_CONFIGURE TRUE
 	USES_TERMINAL_BUILD TRUE
