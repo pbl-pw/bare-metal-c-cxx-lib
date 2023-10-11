@@ -23,7 +23,6 @@ ExternalProject_Add(compiler-rt
 	PREFIX compiler-rt
 	INSTALL_DIR "${EMLIB_INSTALL_DIR}"
 	CMAKE_ARGS ${cmake_args} ${cmake_asm_args} ${cmake_c_args} ${cmake_cxx_args}
-		-DMINGW=TRUE
 		-DLLVM_BINARY_DIR=OFF
 		-DLLVM_ENABLE_RUNTIMES=compiler-rt
 		-DLLVM_DEFAULT_TARGET_TRIPLE=${target_triple}
