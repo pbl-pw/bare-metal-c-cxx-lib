@@ -73,8 +73,6 @@ ExternalProject_Add(compiler-rt
 	USES_TERMINAL_INSTALL TRUE
 	USES_TERMINAL_TEST TRUE
 	LIST_SEPARATOR ,
-	# Always run the build command so that incremental builds are correct.
-	BUILD_ALWAYS TRUE
 	CONFIGURE_HANDLED_BY_BUILD TRUE
 )
 
@@ -92,8 +90,6 @@ ExternalProject_Add(picolibc
 	USES_TERMINAL_INSTALL TRUE
 	USES_TERMINAL_TEST TRUE
 	LIST_SEPARATOR ,
-	# Always run the build command so that incremental builds are correct.
-	BUILD_ALWAYS TRUE
 	CONFIGURE_HANDLED_BY_BUILD TRUE
 )
 
@@ -135,8 +131,6 @@ ExternalProject_Add(libcxx
 	USES_TERMINAL_INSTALL TRUE
 	USES_TERMINAL_TEST TRUE
 	LIST_SEPARATOR ,
-	# Always run the build command so that incremental builds are correct.
-	BUILD_ALWAYS TRUE
 	CONFIGURE_HANDLED_BY_BUILD TRUE
 )
 
@@ -147,10 +141,11 @@ add_library(libc STATIC IMPORTED GLOBAL)
 set_target_properties(libc PROPERTIES IMPORTED_LOCATION "${EMLIB_INSTALL_DIR}/lib/libc.a")
 target_include_directories(libc SYSTEM INTERFACE "${EMLIB_INSTALL_DIR}/include")
 target_compile_options(libc INTERFACE "--target=${target_triple}" ${arch_flags} "-nostdlibinc")
-add_dependencies(libc picolibc-install)
+target_link_options(libc INTERFACE "--target=${target_triple}" ${arch_flags} "-nodefaultlibs")
+add_dependencies(libc picolib)
 
 add_library(libc++ STATIC IMPORTED GLOBAL)
 set_target_properties(libc++ PROPERTIES IMPORTED_LOCATION "${EMLIB_INSTALL_DIR}/lib/libc++.a")
 target_include_directories(libc++ SYSTEM INTERFACE "${EMLIB_INSTALL_DIR}/include/c++/v1")
 target_link_libraries(libc++ INTERFACE libc)
-add_dependencies(libc++ libcxx-install)
+add_dependencies(libc++ libcxx)
