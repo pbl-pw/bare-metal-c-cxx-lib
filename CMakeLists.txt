@@ -44,7 +44,7 @@ set(cmake_c_args
 set(cmake_cxx_args
 -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
 -DCMAKE_CXX_COMPILER_TARGET=${target_triple}
-"-DCMAKE_CXX_FLAGS=${EMLIB_ARCH_FLAGS} -nostdlibinc -isystem${EMLIB_INSTALL_DIR}/include"
+"-DCMAKE_CXX_FLAGS=${EMLIB_ARCH_FLAGS} -nostdlibinc -fno-exceptions -isystem${EMLIB_INSTALL_DIR}/include"
 )
 
 ExternalProject_Add(compiler-rt
@@ -147,5 +147,6 @@ add_dependencies(libc picolib)
 add_library(libc++ STATIC IMPORTED GLOBAL)
 set_target_properties(libc++ PROPERTIES IMPORTED_LOCATION "${EMLIB_INSTALL_DIR}/lib/libc++.a")
 target_include_directories(libc++ SYSTEM INTERFACE "${EMLIB_INSTALL_DIR}/include/c++/v1")
+target_compile_options(libc++ INTERFACE "-fno-exceptions" "-fno-rtti")
 target_link_libraries(libc++ INTERFACE libc)
 add_dependencies(libc++ libcxx)
