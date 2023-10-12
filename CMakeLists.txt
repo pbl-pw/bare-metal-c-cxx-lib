@@ -74,6 +74,7 @@ ExternalProject_Add(compiler-rt
 	USES_TERMINAL_TEST TRUE
 	LIST_SEPARATOR ,
 	CONFIGURE_HANDLED_BY_BUILD TRUE
+	INSTALL_BYPRODUCTS "${EMLIB_INSTALL_DIR}/lib/${CMAKE_SYSTEM_NAME}/libclang_rt.builtins-${EMLIB_ARCH}.a"
 )
 
 ExternalProject_Add(picolibc
@@ -91,6 +92,7 @@ ExternalProject_Add(picolibc
 	USES_TERMINAL_TEST TRUE
 	LIST_SEPARATOR ,
 	CONFIGURE_HANDLED_BY_BUILD TRUE
+	INSTALL_BYPRODUCTS "${EMLIB_INSTALL_DIR}/lib/libc.a"
 )
 
 ExternalProject_Add(libcxx
@@ -132,20 +134,21 @@ ExternalProject_Add(libcxx
 	USES_TERMINAL_TEST TRUE
 	LIST_SEPARATOR ,
 	CONFIGURE_HANDLED_BY_BUILD TRUE
+	INSTALL_BYPRODUCTS "${EMLIB_INSTALL_DIR}/lib/libc++.a"
 )
 
 string(REGEX REPLACE " +" ";" arch_flags ${EMLIB_ARCH_FLAGS})
 file(MAKE_DIRECTORY "${EMLIB_INSTALL_DIR}/include/c++/v1")
 
-add_library(libc STATIC IMPORTED GLOBAL)
-set_target_properties(libc PROPERTIES IMPORTED_LOCATION "${EMLIB_INSTALL_DIR}/lib/libc.a")
+add_library(libc INTERFACE)
+target_link_libraries(libc INTERFACE "${EMLIB_INSTALL_DIR}/lib/libc.a")
 target_include_directories(libc SYSTEM INTERFACE "${EMLIB_INSTALL_DIR}/include")
 target_compile_options(libc INTERFACE "--target=${target_triple}" ${arch_flags} "-nostdlibinc")
 target_link_options(libc INTERFACE "--target=${target_triple}" ${arch_flags} "-nodefaultlibs")
 add_dependencies(libc picolib)
 
-add_library(libc++ STATIC IMPORTED GLOBAL)
-set_target_properties(libc++ PROPERTIES IMPORTED_LOCATION "${EMLIB_INSTALL_DIR}/lib/libc++.a")
+add_library(libc++ INTERFACE)
+target_link_libraries(libc++ INTERFACE "${EMLIB_INSTALL_DIR}/lib/libc++.a")
 target_include_directories(libc++ SYSTEM INTERFACE "${EMLIB_INSTALL_DIR}/include/c++/v1")
 target_compile_options(libc++ INTERFACE "-fno-exceptions" "-fno-rtti")
 target_link_libraries(libc++ INTERFACE libc)
