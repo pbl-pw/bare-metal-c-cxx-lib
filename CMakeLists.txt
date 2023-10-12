@@ -143,16 +143,17 @@ ExternalProject_Add(libcxx
 )
 
 string(REGEX REPLACE " +" ";" arch_flags ${EMLIB_ARCH_FLAGS})
+set(arch_flags "--target=${target_triple}" ${arch_flags} "-nostdlibinc" "-nodefaultlibs")
 
 add_library(libc INTERFACE)
 target_link_libraries(libc INTERFACE ${c_lib_path} ${builtins_lib_path})
 target_include_directories(libc SYSTEM INTERFACE "${EMLIB_INSTALL_DIR}/include")
-target_compile_options(libc INTERFACE "--target=${target_triple}" ${arch_flags} "-nostdlibinc")
-target_link_options(libc INTERFACE "--target=${target_triple}" ${arch_flags} "-nodefaultlibs")
+target_compile_options(libc INTERFACE ${arch_flags})
+target_link_options(libc INTERFACE ${arch_flags})
 add_dependencies(libc picolib)
 
 add_library(libc++ INTERFACE)
 target_link_libraries(libc++ INTERFACE libc ${cxx_lib_path} ${cxxabi_lib_path})
 target_include_directories(libc++ SYSTEM INTERFACE "${EMLIB_INSTALL_DIR}/include/c++/v1")
-target_compile_options(libc++ INTERFACE "-fno-exceptions" "-fno-rtti")
+target_compile_options(libc++ INTERFACE "-fno-exceptions" "-fno-rtti" "-fno-rtti-data" "-fno-unwind-tables" "-fno-asynchronous-unwind-tables" "-fno-c++-static-destructors" "-fno-use-cxa-atexit")
 add_dependencies(libc++ libcxx)
