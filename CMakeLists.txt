@@ -138,7 +138,6 @@ ExternalProject_Add(libcxx
 )
 
 string(REGEX REPLACE " +" ";" arch_flags ${EMLIB_ARCH_FLAGS})
-file(MAKE_DIRECTORY "${EMLIB_INSTALL_DIR}/include/c++/v1")
 
 add_library(libc INTERFACE)
 target_link_libraries(libc INTERFACE "${EMLIB_INSTALL_DIR}/lib/libc.a")
