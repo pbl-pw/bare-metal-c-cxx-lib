@@ -50,6 +50,7 @@ set(cmake_cxx_args
 set(builtins_lib_path "${EMLIB_INSTALL_DIR}/lib/generic/libclang_rt.builtins-${EMLIB_ARCH}.a")
 set(c_lib_path "${EMLIB_INSTALL_DIR}/lib/libc.a")
 set(cxx_lib_path "${EMLIB_INSTALL_DIR}/lib/libc++.a")
+set(cxxabi_lib_path "${EMLIB_INSTALL_DIR}/lib/libc++abi.a")
 
 ExternalProject_Add(compiler-rt
 	SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/llvm-project/runtimes"
@@ -138,7 +139,7 @@ ExternalProject_Add(libcxx
 	USES_TERMINAL_TEST TRUE
 	LIST_SEPARATOR ,
 	CONFIGURE_HANDLED_BY_BUILD TRUE
-	INSTALL_BYPRODUCTS ${cxx_lib_path}
+	INSTALL_BYPRODUCTS ${cxx_lib_path} ${cxxabi_lib_path}
 )
 
 string(REGEX REPLACE " +" ";" arch_flags ${EMLIB_ARCH_FLAGS})
@@ -151,8 +152,7 @@ target_link_options(libc INTERFACE "--target=${target_triple}" ${arch_flags} "-n
 add_dependencies(libc picolib)
 
 add_library(libc++ INTERFACE)
-target_link_libraries(libc++ INTERFACE ${cxx_lib_path})
+target_link_libraries(libc++ INTERFACE libc ${cxx_lib_path} ${cxxabi_lib_path})
 target_include_directories(libc++ SYSTEM INTERFACE "${EMLIB_INSTALL_DIR}/include/c++/v1")
 target_compile_options(libc++ INTERFACE "-fno-exceptions" "-fno-rtti")
-target_link_libraries(libc++ INTERFACE libc)
 add_dependencies(libc++ libcxx)
