@@ -8,19 +8,29 @@ if(NOT EMLIB_INSTALL_DIR)
 	set(EMLIB_INSTALL_DIR "${CMAKE_BINARY_DIR}/install")
 endif(NOT EMLIB_INSTALL_DIR)
 
-if(NOT EMLIB_ARCH)
-	set(EMLIB_ARCH "armv7m") # arch name, must support by compiler-rt
-endif(NOT EMLIB_ARCH)
+if(EMLIB_TRIPPLE)
+	include("${EMLIB_TRIPPLE}.cmake" OPTIONAL RESULT_VARIABLE is_pre_defined_tripple)
+	if(NOT is_pre_defined_tripple)
+		message(FATAL_ERROR "tripple '${EMLIB_TRIPPLE}' not pre-defined, setting 'EMLIB_ARCH' and(maybe) 'EMLIB_ABI' and(maybe) 'EMLIB_ARCH_FLAGS'")
+	else()
+		message("tripple '${EMLIB_TRIPPLE}' definition loaded: EMLIB_ARCH => ${EMLIB_ARCH}, EMLIB_ABI => ${EMLIB_ABI}, EMLIB_ARCH_FLAGS => ${EMLIB_ARCH_FLAGS}")
+	endif(NOT is_pre_defined_tripple)
+else(EMLIB_TRIPPLE) # NOT EMLIB_TRIPPLE
+	if(NOT EMLIB_ARCH)
+		set(EMLIB_ARCH "armv7m") # arch name, must support by compiler-rt
+	endif(NOT EMLIB_ARCH)
 
-if(NOT EMLIB_ABI)
-	set(EMLIB_ABI "eabi") # "abi, ex: eabi, eabihf
-endif(NOT EMLIB_ABI)
+	if(NOT EMLIB_ABI)
+		set(EMLIB_ABI "eabi") # "abi, ex: eabi, eabihf
+	endif(NOT EMLIB_ABI)
 
-if(NOT EMLIB_ARCH_FLAGS)
-	set(EMLIB_ARCH_FLAGS "-march=armv7m -mfloat-abi=soft -mfpu=none") # detail flags, ex: -march=armv7m -mfloat-abi=soft -mfpu=none
-endif(NOT EMLIB_ARCH_FLAGS)
+	if(NOT EMLIB_ARCH_FLAGS)
+		set(EMLIB_ARCH_FLAGS "-march=armv7m -mfloat-abi=soft -mfpu=none") # detail flags, ex: -march=armv7m -mfloat-abi=soft -mfpu=none
+	endif(NOT EMLIB_ARCH_FLAGS)
+endif(EMLIB_TRIPPLE)
 
 set(target_triple "${EMLIB_ARCH}-none-${EMLIB_ABI}")
+message("target tripple: ${target_triple} (with flags: ${EMLIB_ARCH_FLAGS})")
 
 set(cmake_args
 -Wno-dev
