@@ -40,6 +40,7 @@ message("target tripple: ${target_triple} (with flags: ${EMLIB_ARCH_FLAGS})")
 
 set(cmake_args
 -Wno-dev
+--fresh
 -DCMAKE_BUILD_TYPE=MinSizeRel
 -DCMAKE_INSTALL_PREFIX=<INSTALL_DIR>
 # Let CMake know we're cross-compiling
