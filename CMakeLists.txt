@@ -158,7 +158,7 @@ target_link_libraries(libc INTERFACE ${c_lib_path} ${builtins_lib_path})
 target_include_directories(libc SYSTEM INTERFACE "${EMLIB_INSTALL_DIR}/include")
 target_compile_options(libc INTERFACE ${arch_flags})
 target_link_options(libc INTERFACE ${arch_flags})
-add_dependencies(libc picolib)
+add_dependencies(libc picolibc compiler-rt)
 
 add_library(libc++ INTERFACE)
 target_link_libraries(libc++ INTERFACE libc ${cxx_lib_path} ${cxxabi_lib_path})
