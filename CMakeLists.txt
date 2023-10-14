@@ -24,6 +24,7 @@ if(EMLIB_PRESET)
 else(EMLIB_PRESET) # NOT EMLIB_PRESET
 	if(NOT EMLIB_ARCH)
 		set(EMLIB_ARCH "armv7m") # arch name, must support by compiler-rt
+		set(EMLIB_LLD_TARGET "armelf")
 	endif(NOT EMLIB_ARCH)
 
 	if(NOT EMLIB_ABI)
