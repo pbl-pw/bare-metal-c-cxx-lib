@@ -11,3 +11,5 @@ else()
 	set(EMLIB_ARCH_FLAGS "-march=armv7em -mfloat-abi=hard -mfpu=fpv4-sp-d16")
 	set(preset_hash "armv7em-hard-fpv4-sp-d16")
 endif(EMLIB_ARCH_FLAGS)
+
+set(EMLIB_LLD_TARGET armelf)

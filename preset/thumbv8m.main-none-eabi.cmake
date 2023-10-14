@@ -16,3 +16,5 @@ else()
 	set(EMLIB_ARCH_FLAGS "-march=armv8m.main -mfloat-abi=softfp -mfpu=fpv5-sp-d16")
 	set(preset_hash "armv8m.main-softfp-fpv5-sp-d16")
 endif(EMLIB_ARCH_FLAGS)
+
+set(EMLIB_LLD_TARGET armelf)

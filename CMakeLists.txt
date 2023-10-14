@@ -19,7 +19,7 @@ if(EMLIB_PRESET)
 		string(REPLACE ";" " " presets "${presets}")
 		message(FATAL_ERROR "preset '${EMLIB_PRESET}' not defined, setting 'EMLIB_ARCH' and(maybe) 'EMLIB_ABI' and(maybe) 'EMLIB_ARCH_FLAGS', or set preset: ${presets}")
 	else()
-		message("preset '${EMLIB_PRESET}' loaded: EMLIB_ARCH => ${EMLIB_ARCH}, EMLIB_ABI => ${EMLIB_ABI}, EMLIB_ARCH_FLAGS => ${EMLIB_ARCH_FLAGS}")
+		message("preset '${EMLIB_PRESET}' loaded: EMLIB_ARCH => ${EMLIB_ARCH}, EMLIB_ABI => ${EMLIB_ABI}, EMLIB_ARCH_FLAGS => ${EMLIB_ARCH_FLAGS}, EMLIB_LLD_TARGET => ${EMLIB_LLD_TARGET}")
 	endif(NOT has_preset)
 else(EMLIB_PRESET) # NOT EMLIB_PRESET
 	if(NOT EMLIB_ARCH)
@@ -152,12 +152,15 @@ ExternalProject_Add(libcxx
 
 string(REGEX REPLACE " +" ";" arch_flags ${EMLIB_ARCH_FLAGS})
 set(arch_flags "--target=${target_triple}" ${arch_flags} "-nostdlibinc" "-nostdlib")
+if(EMLIB_LLD_TARGET)
+	set(EMLIB_LLD_TARGET "-Wl,-m,${EMLIB_LLD_TARGET}")
+endif(EMLIB_LLD_TARGET)
 
 add_library(libc INTERFACE)
 target_link_libraries(libc INTERFACE ${c_lib_path} ${builtins_lib_path})
 target_include_directories(libc SYSTEM INTERFACE "${EMLIB_INSTALL_DIR}/include")
 target_compile_options(libc INTERFACE ${arch_flags})
-target_link_options(libc INTERFACE ${arch_flags})
+target_link_options(libc INTERFACE ${arch_flags} ${EMLIB_LLD_TARGET})
 add_dependencies(libc picolibc compiler-rt)
 
 add_library(libc++ INTERFACE)
