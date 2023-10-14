@@ -5,13 +5,7 @@ set(CMAKE_TRY_COMPILE_TARGET_TYPE STATIC_LIBRARY)
 
 project(emlib VERSION 17.0.2)
 
-include(ExternalProject)
-
 set(emlib_preset_postinclude cmake/empty) # guard prevent set outside
-
-if(NOT EMLIB_INSTALL_DIR)
-	set(EMLIB_INSTALL_DIR "${CMAKE_BINARY_DIR}/install")
-endif(NOT EMLIB_INSTALL_DIR)
 
 if(EMLIB_PRESET)
 	include("preset/${EMLIB_PRESET}.cmake" OPTIONAL RESULT_VARIABLE has_preset)
@@ -39,8 +33,17 @@ else(EMLIB_PRESET) # NOT EMLIB_PRESET
 	endif(NOT EMLIB_ARCH_FLAGS)
 endif(EMLIB_PRESET)
 
+if(NOT EMLIB_INSTALL_DIR)
+	set(EMLIB_INSTALL_DIR "${CMAKE_BINARY_DIR}/install")
+endif(NOT EMLIB_INSTALL_DIR)
+
 set(target_triple "${EMLIB_ARCH}-none-${EMLIB_ABI}")
 message("target tripple: ${target_triple} (with flags: ${EMLIB_ARCH_FLAGS})")
+
+set(builtins_lib_path "${EMLIB_INSTALL_DIR}/lib/generic/libclang_rt.builtins-${EMLIB_ARCH}.a")
+set(c_lib_path "${EMLIB_INSTALL_DIR}/lib/libc.a")
+set(cxx_lib_path "${EMLIB_INSTALL_DIR}/lib/libc++.a")
+set(cxxabi_lib_path "${EMLIB_INSTALL_DIR}/lib/libc++abi.a")
 
 set(cmake_args
 -Wno-dev
@@ -68,10 +71,7 @@ set(cmake_cxx_args
 "-DCMAKE_CXX_FLAGS=${EMLIB_ARCH_FLAGS} -nostdlibinc -fno-exceptions -isystem${EMLIB_INSTALL_DIR}/include"
 )
 
-set(builtins_lib_path "${EMLIB_INSTALL_DIR}/lib/generic/libclang_rt.builtins-${EMLIB_ARCH}.a")
-set(c_lib_path "${EMLIB_INSTALL_DIR}/lib/libc.a")
-set(cxx_lib_path "${EMLIB_INSTALL_DIR}/lib/libc++.a")
-set(cxxabi_lib_path "${EMLIB_INSTALL_DIR}/lib/libc++abi.a")
+include(ExternalProject)
 
 ExternalProject_Add(compiler-rt
 	SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/llvm-project/runtimes"
