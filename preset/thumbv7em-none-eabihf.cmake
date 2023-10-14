@@ -12,4 +12,4 @@ else()
 	set(preset_hash "armv7em-hard-fpv4-sp-d16")
 endif(EMLIB_ARCH_FLAGS)
 
-set(EMLIB_LLD_TARGET armelf)
+include("cmake/arm.cmake")

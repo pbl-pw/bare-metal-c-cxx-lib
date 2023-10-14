@@ -7,6 +7,8 @@ project(emlib VERSION 17.0.2)
 
 include(ExternalProject)
 
+set(emlib_preset_postinclude cmake/empty) # guard prevent set outside
+
 if(NOT EMLIB_INSTALL_DIR)
 	set(EMLIB_INSTALL_DIR "${CMAKE_BINARY_DIR}/install")
 endif(NOT EMLIB_INSTALL_DIR)
@@ -25,6 +27,7 @@ else(EMLIB_PRESET) # NOT EMLIB_PRESET
 	if(NOT EMLIB_ARCH)
 		set(EMLIB_ARCH "armv7m") # arch name, must support by compiler-rt
 		set(EMLIB_LLD_TARGET "armelf")
+		set(emlib_preset_postinclude cmake/arm-post.cmake)
 	endif(NOT EMLIB_ARCH)
 
 	if(NOT EMLIB_ABI)
@@ -170,3 +173,5 @@ target_include_directories(libc++ SYSTEM INTERFACE $<$<COMPILE_LANGUAGE:CXX>: ${
 target_compile_options(libc++ INTERFACE $<$<COMPILE_LANGUAGE:CXX>: -fno-exceptions -fno-rtti -fno-unwind-tables -fno-asynchronous-unwind-tables -fno-c++-static-destructors -fno-use-cxa-atexit>)
 target_link_options(libc++ INTERFACE "-fno-rtti-data")
 add_dependencies(libc++ libcxx)
+
+include("${emlib_preset_postinclude}" OPTIONAL)

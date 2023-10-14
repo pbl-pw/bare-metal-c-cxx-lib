@@ -3,4 +3,4 @@ set(EMLIB_ABI "eabi")
 set(EMLIB_ARCH_FLAGS "-march=armv8m.base -mfloat-abi=soft -mfpu=none")
 set(preset_hash "armv8m.base-soft-none")
 
-set(EMLIB_LLD_TARGET armelf)
+include("cmake/arm.cmake")
