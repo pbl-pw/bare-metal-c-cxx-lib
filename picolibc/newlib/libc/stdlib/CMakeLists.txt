@@ -103,6 +103,7 @@ picolibc_sources(
   wcstod.c
   wcstoimax.c
   wcstol.c
+  wcstold.c
   wcstoll.c
   wcstombs.c
   wcstoul.c
