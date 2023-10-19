@@ -44,14 +44,13 @@ set(builtins_lib_path "${EMLIB_INSTALL_DIR}/lib/generic/libclang_rt.builtins-${E
 set(c_lib_path "${EMLIB_INSTALL_DIR}/lib/libc.a")
 set(cxx_lib_path "${EMLIB_INSTALL_DIR}/lib/libc++.a")
 set(cxxabi_lib_path "${EMLIB_INSTALL_DIR}/lib/libc++abi.a")
-set(common_flags "${EMLIB_ARCH_FLAGS} -nostdlibinc -ffunction-sections -fdata-sections")
 
 set(cmake_args
 -Wno-dev
 --fresh
 -DCMAKE_BUILD_TYPE=MinSizeRel
 -DCMAKE_INSTALL_PREFIX=<INSTALL_DIR>
-# Let CMake know we're cross-compiling
+-DCMAKE_EXPORT_COMPILE_COMMANDS=TRUE
 -DCMAKE_SYSTEM_NAME=Generic
 -DCMAKE_SYSTEM_PROCESSOR=${EMLIB_ARCH}
 -DCMAKE_TRY_COMPILE_TARGET_TYPE=STATIC_LIBRARY
@@ -60,16 +59,16 @@ set(cmake_args
 )
 set(cmake_asm_args
 -DCMAKE_ASM_COMPILER_TARGET=${target_triple}
-"-DCMAKE_ASM_FLAGS=${common_flags}"
+"-DCMAKE_ASM_FLAGS=${EMLIB_ARCH_FLAGS}"
 )
 set(cmake_c_args
 -DCMAKE_C_COMPILER_TARGET=${target_triple}
-"-DCMAKE_C_FLAGS=${common_flags}"
+"-DCMAKE_C_FLAGS=${EMLIB_ARCH_FLAGS}"
 )
 set(cmake_cxx_args
 -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
 -DCMAKE_CXX_COMPILER_TARGET=${target_triple}
-"-DCMAKE_CXX_FLAGS=${common_flags} -fno-exceptions -isystem${EMLIB_INSTALL_DIR}/include"
+"-DCMAKE_CXX_FLAGS=${EMLIB_ARCH_FLAGS} -isystem${EMLIB_INSTALL_DIR}/include"
 )
 
 include(ExternalProject)
@@ -154,8 +153,8 @@ ExternalProject_Add(libcxx
 	INSTALL_BYPRODUCTS ${cxx_lib_path} ${cxxabi_lib_path}
 )
 
-string(REGEX REPLACE " +" ";" common_flags ${common_flags})
-set(common_flags "--target=${target_triple}" ${common_flags} "-nostdlib")
+string(REGEX REPLACE " +" ";" common_flags ${EMLIB_ARCH_FLAGS})
+set(common_flags "--target=${target_triple}" ${common_flags} -nostdlib -nostdlibinc -ffunction-sections -fdata-sections)
 if(EMLIB_LLD_TARGET)
 	set(EMLIB_LLD_TARGET "-Wl,-m,${EMLIB_LLD_TARGET}")
 endif(EMLIB_LLD_TARGET)
