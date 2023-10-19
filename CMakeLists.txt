@@ -44,6 +44,7 @@ set(builtins_lib_path "${EMLIB_INSTALL_DIR}/lib/generic/libclang_rt.builtins-${E
 set(c_lib_path "${EMLIB_INSTALL_DIR}/lib/libc.a")
 set(cxx_lib_path "${EMLIB_INSTALL_DIR}/lib/libc++.a")
 set(cxxabi_lib_path "${EMLIB_INSTALL_DIR}/lib/libc++abi.a")
+set(common_flags "${EMLIB_ARCH_FLAGS} -nostdlibinc -ffunction-sections -fdata-sections")
 
 set(cmake_args
 -Wno-dev
@@ -59,16 +60,16 @@ set(cmake_args
 )
 set(cmake_asm_args
 -DCMAKE_ASM_COMPILER_TARGET=${target_triple}
-"-DCMAKE_ASM_FLAGS=${EMLIB_ARCH_FLAGS} -nostdlibinc"
+"-DCMAKE_ASM_FLAGS=${common_flags}"
 )
 set(cmake_c_args
 -DCMAKE_C_COMPILER_TARGET=${target_triple}
-"-DCMAKE_C_FLAGS=${EMLIB_ARCH_FLAGS} -nostdlibinc"
+"-DCMAKE_C_FLAGS=${common_flags}"
 )
 set(cmake_cxx_args
 -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
 -DCMAKE_CXX_COMPILER_TARGET=${target_triple}
-"-DCMAKE_CXX_FLAGS=${EMLIB_ARCH_FLAGS} -nostdlibinc -fno-exceptions -isystem${EMLIB_INSTALL_DIR}/include"
+"-DCMAKE_CXX_FLAGS=${common_flags} -fno-exceptions -isystem${EMLIB_INSTALL_DIR}/include"
 )
 
 include(ExternalProject)
@@ -153,8 +154,8 @@ ExternalProject_Add(libcxx
 	INSTALL_BYPRODUCTS ${cxx_lib_path} ${cxxabi_lib_path}
 )
 
-string(REGEX REPLACE " +" ";" arch_flags ${EMLIB_ARCH_FLAGS})
-set(arch_flags "--target=${target_triple}" ${arch_flags} "-nostdlibinc" "-nostdlib")
+string(REGEX REPLACE " +" ";" common_flags ${common_flags})
+set(common_flags "--target=${target_triple}" ${common_flags} "-nostdlib")
 if(EMLIB_LLD_TARGET)
 	set(EMLIB_LLD_TARGET "-Wl,-m,${EMLIB_LLD_TARGET}")
 endif(EMLIB_LLD_TARGET)
@@ -162,8 +163,8 @@ endif(EMLIB_LLD_TARGET)
 add_library(libc INTERFACE)
 target_link_libraries(libc INTERFACE ${c_lib_path} ${builtins_lib_path})
 target_include_directories(libc SYSTEM INTERFACE "${EMLIB_INSTALL_DIR}/include")
-target_compile_options(libc INTERFACE ${arch_flags})
-target_link_options(libc INTERFACE ${arch_flags} ${EMLIB_LLD_TARGET})
+target_compile_options(libc INTERFACE ${common_flags})
+target_link_options(libc INTERFACE ${common_flags} ${EMLIB_LLD_TARGET} "-Wl,-gc-sections")
 add_dependencies(libc picolibc compiler-rt)
 
 add_library(libc++ INTERFACE)
